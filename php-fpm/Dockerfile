@@ -15,22 +15,22 @@ RUN apt-get update && \
         git \
         unzip
 
-# Install the PHP mcrypt extention
-RUN docker-php-ext-install mcrypt
-
-# Install the PHP pdo_mysql extention
-RUN docker-php-ext-install mysqli \
-    && docker-php-ext-install pdo_mysql
-# Install the PHP pdo_pgsql extention
-RUN docker-php-ext-install pdo_pgsql
-
-# Install the PHP gd library
-RUN docker-php-ext-install gd && \
-    docker-php-ext-configure gd \
+# Install the PHP mcrypt, pdo_mysql, pdo_pgsql extention, PHP gd library
+RUN docker-php-ext-install mcrypt \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install pdo_pgsql \
+    && docker-php-ext-install gd \
+    && docker-php-ext-configure gd \
         --enable-gd-native-ttf \
         --with-jpeg-dir=/usr/lib \
-        --with-freetype-dir=/usr/include/freetype2 && \
-    docker-php-ext-install gd
+        --with-freetype-dir=/usr/include/freetype2 \
+    && docker-php-ext-install gd
+
+# Memcached
+RUN apt-get update && apt-get install -y libmemcached11 libmemcachedutil2 build-essential libmemcached-dev libz-dev \
+    && pecl install memcached-2.2.0 \
+    && echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
 # Add conf
 ADD ./laravel.ini /usr/local/etc/php/conf.d/
