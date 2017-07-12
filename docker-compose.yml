@@ -1,0 +1,68 @@
+version: '2'
+
+# Networks
+
+networks:
+  local:
+    driver: "bridge"
+
+# Volumes
+
+volumes:
+  mysql:
+    driver: "local"
+
+# Services
+
+services:
+  app:
+      build:
+        context: ./app
+      volumes:
+        - ${APP_PATH}:/var/www/app
+        - ${API_PATH}:/var/www/api
+      networks:
+        - local
+
+  nginx:
+      build:
+        context: ./nginx
+        args:
+          - PHP_UPSTREAM=php-fpm
+      volumes:
+        - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
+      volumes_from:
+        - app
+      ports:
+        - "80:80"
+      depends_on:
+        - php-fpm
+      networks:
+        - local
+
+  php-fpm:
+      build:
+        context: ./php-fpm
+      volumes:
+        - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+      volumes_from:
+        - app
+      expose:
+        - "9000"
+      networks:
+        - local
+
+  mysql:
+      build:
+        context: ./mysql
+      environment:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      volumes:
+        - ./mysql/data:/var/lib/mysql
+      ports:
+        - "3306:3306"
+      networks:
+        - local

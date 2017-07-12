@@ -1,0 +1,17 @@
+# APP
+APP_PATH=./app/app/
+API_PATH=./app/api/
+
+# PHP
+PHP_VERSION=56
+
+# NGINX
+NGINX_HOST_LOG_PATH=./logs/nginx/
+NGINX_SITES_PATH=./nginx/sites/
+
+# MYSQL
+MYSQL_DATABASE=acamica
+MYSQL_USER=acamica_user
+MYSQL_PASSWORD=secret
+MYSQL_PORT=3306
+MYSQL_ROOT_PASSWORD=root
